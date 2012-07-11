@@ -13,6 +13,7 @@ ctrader.py is a Python client to answer [captcha.trader](http://www.captchatrade
 
 ## Configurtion
 If you want to save the login credentials create a file (default: `~/.ctrader`) with the following content:
+
 	[user]
 	username=USERNAME
 	password=PASSWORD or PASSKEY
