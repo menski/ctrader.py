@@ -1,5 +1,3 @@
-import pygtk
-import gtk
 import base64
 import httplib
 import urllib
@@ -19,26 +17,25 @@ class CaptchaWindow():
     def __init__(self, image):
         with open(CaptchaWindow.captcha_path, 'wb') as f:
             f.write(base64.b64decode(image.split(',', 1)[1]))
-        self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
-        self.window.set_title('ctrader.py - ' + image[:4])
-        self.window.connect("destroy", self.destroy)
+        self.window = None
         self.entry = None
         self.finish = False
         self.answer = None
-        self.gui(self.window)
-        gtk.main()
+        self.gui()
 
-    def destroy(self, widget, data=None):
-        gtk.main_quit()
-
-    def gui(self, window):
+    def gui(self):
+        import pygtk
+        import gtk
+        self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
+        self.window.set_title('ctrader.py')
+        self.window.connect("destroy", lambda w: gtk.main_quit())
         table = gtk.Table(3, 2, False)
-        window.add(table)
+        self.window.add(table)
         image = gtk.Image()
         image.set_from_file(CaptchaWindow.captcha_path)
         table.attach(image, 0, 2, 0, 1)
         image.show()
-        window.set_position(gtk.WIN_POS_CENTER)
+        self.window.set_position(gtk.WIN_POS_CENTER)
         self.entry = gtk.Entry()
         table.attach(self.entry, 0, 2, 1, 2)
         self.entry.show()
@@ -53,10 +50,12 @@ class CaptchaWindow():
         button.show()
         button.connect("clicked", self.stop)
         table.show()
-        window.show()
+        self.window.show()
+        self.escape = gtk.keysyms.Escape
+        gtk.main()
 
     def key_pressed(self, widget, event, data=None):
-        if event.keyval == gtk.keysyms.Escape:
+        if event.keyval == self.escape:
             self.stop(widget)
 
     def stop(self, widget, data=None):
@@ -209,7 +208,9 @@ def main():
         if users is None or not users:
             run(userinput())
         else:
-            run(users[0])
+            pool = multiprocessing.Pool(len(users))
+            job = pool.map_async(run, users)
+            job.wait()
     else:
         run([opts.username, opts.password])
 
