@@ -17,9 +17,10 @@ If you want to save the login credentials create a file (default: `~/.ctrader`) 
 	username=USERNAME
 	password=PASSWORD or PASSKEY
 
-Your passkey is visible on your [account page](http://www.captchatrader.com/account/)
+Your passkey is visible on your [account page](http://www.captchatrader.com/account/).
 
 ## Input
 If you not provide any commandline options and no configuration file exists the programm will ask you for your credentials.
+
 	Username: USERNAME
 	Password/Passkey: 
