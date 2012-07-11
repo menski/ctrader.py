@@ -7,6 +7,16 @@ import argparse
 import ConfigParser
 import getpass
 import multiprocessing
+import logging
+
+# create logger
+log = logging.getLogger('ctrader.py')
+log.setLevel(logging.DEBUG)
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+ch.setFormatter(logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)5s - %(message)s'))
+log.addHandler(ch)
 
 
 class CaptchaWindow():
@@ -97,16 +107,16 @@ class CaptchaTrader(object):
         """Get response"""
         res = self.conn.getresponse()
         j = json.loads(res.read())
-        print res.status, res.reason, j[0]
+        log.debug('Response %s %s %s', res.status, res.reason, j[0])
         if j[0] == -1:
-            print "[ERROR]", j[1]
+            log.error(j[1])
             return None
         else:
             return j
 
     def enqueue(self):
         """Enqueue user"""
-        print "Enqueue user"
+        log.debug('Enqueue user %s', self.username)
         res = self.get("/enqueue/" + self.user_url)
         if res is None:
             return None
@@ -116,18 +126,18 @@ class CaptchaTrader(object):
 
     def credits(self):
         """Get credits of user"""
-        print "Get credits"
+        log.debug('get credits for user %s', self.username)
         res = self.get("/get_credits/" + self.user_url)
         if res is None:
             return -1
         else:
-            return res[1] 
+            return res[1]
 
     def answer(self, value):
         """Answer captcha"""
-        print "Send answer:", value
+        log.debug('Send answer for user %s: %s', self.username, value)
         if self.ticket is None:
-            print "ERROR"
+            log.error('Invalid ticket number')
         else:
             params = urllib.urlencode({
                 'username': self.username,
@@ -139,9 +149,9 @@ class CaptchaTrader(object):
 
     def dequeue(self):
         """Dequeue user"""
-        print "Dequeue user"
+        log.debug('Dequeue user: %s', self.username)
         params = urllib.urlencode({
-                'username': self.username, 
+                'username': self.username,
                 'password': self.password})
         self.post("/dequeue/", params)
 
@@ -179,6 +189,7 @@ def userinput():
 
 def run(creds):
     """Start requesting captchas for user"""
+    log.info('start event loop for user %s', creds[0])
     finish = False
     ct = CaptchaTrader(creds[0], creds[1])
     while(not finish):
@@ -190,12 +201,14 @@ def run(creds):
                 if frame.answer is not None:
                     ct.answer(frame.answer)
                     credits = ct.credits()
-                    print "Credits:", credits
+                    log.info('Credits for %s: %d', creds[0], credits)
                 elif not finish:
+                    log.debug('No answer given')
                     ct.dequeue()
             except Exception, err:
-                print err
+                log.error(err)
                 break
+    log.info('stop event loop for user %s', creds[0])
     ct.dequeue()
     ct.close()
 
@@ -206,12 +219,15 @@ def main():
     if opts.username is None or opts.password is None:
         users = config(opts.config)
         if users is None or not users:
+            log.info('use user input')
             run(userinput())
         else:
+            log.info('use configuration file')
             pool = multiprocessing.Pool(len(users))
             job = pool.map_async(run, users)
             job.wait()
     else:
+        log.info('use commandline options')
         run([opts.username, opts.password])
 
 
