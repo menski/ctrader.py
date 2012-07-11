@@ -22,5 +22,5 @@ Your passkey is visible on your [account page](http://www.captchatrader.com/acco
 ## Input
 If you not provide any commandline options and no configuration file exists the programm will ask you for your credentials.
 
-	Username: USERNAME
+	Username: heinz
 	Password/Passkey: 
