@@ -25,3 +25,17 @@ If you not provide any commandline options and no configuration file exists the 
 
 	Username: heinz
 	Password/Passkey: 
+
+## Multi-user support
+If want to use multiple accounts you can configure all accounts in the configuration file. The Implementation uses a process per user.
+
+	[user1]
+	username=USERNAME1
+	password=PASSWORD1 or PASSKEY1
+	[user2]
+	username=USERNAME2
+	password=PASSWORD2 or PASSKEY2
+	...
+	[userX]
+	username=USERNAMEX
+	password=PASSWORDX or PASSKEYX
