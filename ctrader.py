@@ -22,10 +22,9 @@ log.addHandler(ch)
 class CaptchaWindow():
     """Window to input the answer for the captcha"""
 
-    captcha_path = 'captcha.jpg'
-
-    def __init__(self, image):
-        with open(CaptchaWindow.captcha_path, 'wb') as f:
+    def __init__(self, image, username):
+        self.img_path = 'captcha-{}.jpg'.format(username)
+        with open(self.img_path, 'wb') as f:
             f.write(base64.b64decode(image.split(',', 1)[1]))
         self.window = None
         self.entry = None
@@ -42,7 +41,8 @@ class CaptchaWindow():
         table = gtk.Table(3, 2, False)
         self.window.add(table)
         image = gtk.Image()
-        image.set_from_file(CaptchaWindow.captcha_path)
+        image.set_from_file(self.img_path)
+        os.remove(self.img_path)
         table.attach(image, 0, 2, 0, 1)
         image.show()
         self.window.set_position(gtk.WIN_POS_CENTER)
@@ -196,7 +196,7 @@ def run(creds):
         captcha = ct.enqueue()
         if captcha is not None:
             try:
-                frame = CaptchaWindow(captcha)
+                frame = CaptchaWindow(captcha, creds[0])
                 finish = frame.finish
                 if frame.answer is not None:
                     ct.answer(frame.answer)
