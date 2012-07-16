@@ -3,15 +3,21 @@
 ctrader.py is a Python client to answer [captcha.trader](http://www.captchatrader.com) captchas.
 
 ## Usage
-	usage: ctrader.py [-h] [-u USERNAME] [-p PASSWORD] [-c CONFIG]
+	usage: ctrader.py [-h] [-u USERNAME] [-p PASSWORD] [-c CONFIG] [--credits]
+										[--log LOG]
 
 	Answer captchas from www.captchatrader.com
 
 	optional arguments:
 		-h, --help            show this help message and exit
 		-u USERNAME, --username USERNAME
+													Username for www.captchatrader.com
 		-p PASSWORD, --password PASSWORD
+													Password or passkey for www.captchatrader.com
 		-c CONFIG, --config CONFIG
+													Location of a ctrader.py configuration file
+		--credits             Query only current credit count
+		--log LOG             Set logging level
 
 ## Configurtion
 If you want to save the login credentials create a file (default: `~/.ctrader`) with the following content:
