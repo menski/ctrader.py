@@ -19,6 +19,10 @@ ctrader.py is a Python client to answer [captcha.trader](http://www.captchatrade
 		--credits             Query only current credit count
 		--log LOG             Set logging level
 
+## Key bindings
+- Return: Send answer and request next captcha
+- Escape: Send answer and stop requesting new captchas
+
 ## Configuration
 If you want to save the login credentials create a file (default: `~/.ctrader`) with the following content:
 
