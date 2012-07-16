@@ -19,7 +19,7 @@ ctrader.py is a Python client to answer [captcha.trader](http://www.captchatrade
 		--credits             Query only current credit count
 		--log LOG             Set logging level
 
-## Configurtion
+## Configuration
 If you want to save the login credentials create a file (default: `~/.ctrader`) with the following content:
 
 	[user]
@@ -29,7 +29,7 @@ If you want to save the login credentials create a file (default: `~/.ctrader`) 
 Your passkey is visible on your [account page](http://www.captchatrader.com/account/).
 
 ## Input
-If you not provide any commandline options and no configuration file exists the programm will ask you for your credentials.
+If you not provide any command-line options and no configuration file exists the program will ask you for your credentials.
 
 	Username: heinz
 	Password/Passkey: 
