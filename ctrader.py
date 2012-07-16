@@ -160,9 +160,14 @@ def options():
     """Get options from commandline"""
     parser = argparse.ArgumentParser(
             description='Answer captchas from www.captchatrader.com')
-    parser.add_argument('-u', '--username', default=None)
-    parser.add_argument('-p', '--password', default=None)
-    parser.add_argument('-c', '--config', default='~/.ctrader')
+    parser.add_argument('-u', '--username', default=None,
+            help='Username for www.captchatrader.com')
+    parser.add_argument('-p', '--password', default=None,
+            help='Password or passkey for www.captchatrader.com')
+    parser.add_argument('-c', '--config', default='~/.ctrader',
+            help='Location of a ctrader.py configuration file')
+    parser.add_argument('--credits', default=False, action='store_true',
+            help='Query only current credit count')
     return parser.parse_args()
 
 
@@ -213,6 +218,13 @@ def run(creds):
     ct.close()
 
 
+def credits(creds):
+    """Query current credit count for user """
+    ct = CaptchaTrader(creds[0], creds[1])
+    print 'Credits for %s: %d' % (creds[0], ct.credits())
+    ct.close()
+
+
 def main():
     """Main function"""
     opts = options()
@@ -220,15 +232,24 @@ def main():
         users = config(opts.config)
         if users is None or not users:
             log.info('use user input')
-            run(userinput())
+            if opts.credits:
+                credits(userinput())
+            else:
+                run(userinput())
         else:
             log.info('use configuration file')
             pool = multiprocessing.Pool(len(users))
-            job = pool.map_async(run, users)
+            if opts.credits:
+                job = pool.map_async(credits, users)
+            else:
+                job = pool.map_async(run, users)
             job.wait()
     else:
         log.info('use commandline options')
-        run([opts.username, opts.password])
+        if opts.credits:
+            credits([opts.username, opts.password])
+        else:
+            run([opts.username, opts.password])
 
 
 if __name__ == '__main__':
