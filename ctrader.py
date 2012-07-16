@@ -168,6 +168,7 @@ def options():
             help='Location of a ctrader.py configuration file')
     parser.add_argument('--credits', default=False, action='store_true',
             help='Query only current credit count')
+    parser.add_argument('--log', default='DEBUG', help='Set logging level')
     return parser.parse_args()
 
 
@@ -228,6 +229,7 @@ def credits(creds):
 def main():
     """Main function"""
     opts = options()
+    ch.setLevel(getattr(logging, opts.log.upper()))
     if opts.username is None or opts.password is None:
         users = config(opts.config)
         if users is None or not users:
