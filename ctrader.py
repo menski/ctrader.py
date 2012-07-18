@@ -168,7 +168,12 @@ def options():
             help='Location of a ctrader.py configuration file')
     parser.add_argument('--credits', default=False, action='store_true',
             help='Query only current credit count')
-    parser.add_argument('--log', default='DEBUG', help='Set logging level')
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('--log', default='INFO', help='Set logging level')
+    group.add_argument('-q', '--quiet', dest='log', action='store_const',
+            const='ERROR', help='Set logging level to ERROR')
+    group.add_argument('-v', '--verbose', dest='log', action='store_const',
+            const='DEBUG', help='Set logging level to DEBUG')
     return parser.parse_args()
 
 
@@ -239,7 +244,7 @@ def main():
             else:
                 run(userinput())
         else:
-            log.info('use configuration file')
+            log.info('use configuration file %s', opts.config)
             pool = multiprocessing.Pool(len(users))
             if opts.credits:
                 job = pool.map_async(credits, users)
